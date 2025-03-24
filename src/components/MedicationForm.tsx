@@ -36,6 +36,7 @@ export type Medication = {
   dosage: string;
   timeOfDay: string;
   foodRelation: string;
+  reminderTime?: string;
 };
 
 const MedicationForm = ({
@@ -51,6 +52,7 @@ const MedicationForm = ({
     dosage: initialData?.dosage || "",
     timeOfDay: initialData?.timeOfDay || "",
     foodRelation: initialData?.foodRelation || "",
+    reminderTime: initialData?.reminderTime || "",
   });
   
   const [internalOpen, setInternalOpen] = useState(false);
@@ -87,6 +89,7 @@ const MedicationForm = ({
         dosage: "",
         timeOfDay: "",
         foodRelation: "",
+        reminderTime: "",
       });
     }
 
@@ -145,6 +148,19 @@ const MedicationForm = ({
               <SelectItem value="night">Night</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+        
+        <div className="grid gap-2">
+          <Label htmlFor="med-reminder-time">Specific Reminder Time</Label>
+          <Input
+            id="med-reminder-time"
+            type="time"
+            value={medication.reminderTime || ""}
+            onChange={(e) =>
+              setMedication({ ...medication, reminderTime: e.target.value })
+            }
+            className="h-12"
+          />
         </div>
         
         <div className="grid gap-2">

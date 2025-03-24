@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   Card,
@@ -13,10 +12,12 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
 
 const AuthForm = () => {
   const { toast } = useToast();
+  const { login, register } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   
   // Login form state
@@ -33,26 +34,21 @@ const AuthForm = () => {
     confirmPassword: "",
   });
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate API request
-    setTimeout(() => {
+    try {
+      await login(loginData.email, loginData.password);
+      // Redirect happens automatically via the App.tsx router logic
+    } catch (error) {
+      // Error handling is done in the useAuth hook
+    } finally {
       setIsLoading(false);
-      
-      // For demo purposes, we'll always succeed
-      toast({
-        title: "Success",
-        description: "Welcome back to DOSE-MATE!",
-      });
-      
-      // In a real app, you would redirect to the dashboard
-      window.location.href = "/dashboard";
-    }, 1000);
+    }
   };
 
-  const handleSignupSubmit = (e: React.FormEvent) => {
+  const handleSignupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
@@ -67,19 +63,14 @@ const AuthForm = () => {
     
     setIsLoading(true);
     
-    // Simulate API request
-    setTimeout(() => {
+    try {
+      await register(signupData.email, signupData.password);
+      // Redirect happens automatically via the App.tsx router logic
+    } catch (error) {
+      // Error handling is done in the useAuth hook
+    } finally {
       setIsLoading(false);
-      
-      // For demo purposes, we'll always succeed
-      toast({
-        title: "Success",
-        description: "Account created successfully!",
-      });
-      
-      // In a real app, you would redirect to the dashboard
-      window.location.href = "/dashboard";
-    }, 1000);
+    }
   };
 
   return (

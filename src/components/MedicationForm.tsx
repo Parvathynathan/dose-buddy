@@ -98,7 +98,7 @@ const MedicationForm = ({
     });
   };
 
-  const DialogContent = (
+  const formContent = (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
         <div className="grid gap-2">
@@ -184,7 +184,7 @@ const MedicationForm = ({
   );
 
   if (open !== undefined) {
-    return DialogContent;
+    return formContent;
   }
 
   return (
@@ -204,7 +204,7 @@ const MedicationForm = ({
             Enter your medication details below.
           </DialogDescription>
         </DialogHeader>
-        {DialogContent}
+        {formContent}
       </DialogContent>
     </Dialog>
   );

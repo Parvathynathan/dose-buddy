@@ -8,7 +8,8 @@ import {
   getDocs, 
   query, 
   where,
-  Timestamp 
+  Timestamp,
+  setDoc
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { Medication } from "@/components/MedicationForm";
@@ -50,6 +51,9 @@ export const addMedication = async (userId: string, medication: Omit<Medication,
       createdAt: Timestamp.now(),
     });
     
+    // Update the user document with the time for Arduino to read
+    await updateArduinoTime(userId, medication.reminderTime);
+    
     return {
       id: docRef.id,
       ...medication,
@@ -69,6 +73,11 @@ export const updateMedication = async (medicationId: string, medication: Partial
       updatedAt: Timestamp.now(),
     });
     
+    // If reminderTime is updated, update the Arduino time as well
+    if (medication.reminderTime && medication.userId) {
+      await updateArduinoTime(medication.userId, medication.reminderTime);
+    }
+    
     return true;
   } catch (error: any) {
     console.error("Error updating medication:", error);
@@ -85,6 +94,26 @@ export const deleteMedication = async (medicationId: string) => {
     return true;
   } catch (error: any) {
     console.error("Error deleting medication:", error);
+    throw new Error(error.message);
+  }
+};
+
+// Update the time field in the user's document for Arduino to read
+export const updateArduinoTime = async (userId: string, reminderTime: string) => {
+  try {
+    // Format the time as expected by Arduino (HH:MM)
+    const timeForArduino = reminderTime.substring(0, 5); // Extract HH:MM from the ISO string
+    
+    // Set the time directly in the user document
+    const userDocRef = doc(db, "users", userId);
+    await setDoc(userDocRef, { 
+      time: timeForArduino 
+    }, { merge: true });
+    
+    console.log(`Updated Arduino time to ${timeForArduino} for user ${userId}`);
+    return true;
+  } catch (error: any) {
+    console.error("Error updating Arduino time:", error);
     throw new Error(error.message);
   }
 };

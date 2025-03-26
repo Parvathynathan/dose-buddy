@@ -1,4 +1,3 @@
-
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword,
@@ -7,11 +6,22 @@ import {
   User
 } from "firebase/auth";
 import { auth } from "./firebase";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "./firebase";
 
 // Sign up with email and password
 export const signUp = async (email: string, password: string) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    
+    // Create a user document for Arduino to reference
+    await setDoc(doc(db, "users", userCredential.user.uid), {
+      email: userCredential.user.email,
+      createdAt: new Date(),
+      arduinoConnected: false,
+      time: ""  // This will be updated when a medication is added
+    });
+    
     return userCredential.user;
   } catch (error: any) {
     throw new Error(error.message);

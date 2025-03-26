@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +36,7 @@ export type Medication = {
   timeOfDay: string;
   foodRelation: string;
   reminderTime?: string;
+  userId?: string; // Added userId property
 };
 
 const MedicationForm = ({

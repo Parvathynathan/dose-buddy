@@ -9,7 +9,8 @@ import {
   query, 
   where,
   Timestamp,
-  setDoc
+  setDoc,
+  getDoc
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { Medication } from "@/components/MedicationForm";
@@ -68,14 +69,24 @@ export const addMedication = async (userId: string, medication: Omit<Medication,
 export const updateMedication = async (medicationId: string, medication: Partial<Medication>) => {
   try {
     const medicationRef = doc(db, "medications", medicationId);
+    
+    // Get the current medication to retrieve userId if not provided
+    let userId = medication.userId;
+    if (!userId) {
+      const medicationDoc = await getDoc(medicationRef);
+      if (medicationDoc.exists()) {
+        userId = medicationDoc.data().userId;
+      }
+    }
+    
     await updateDoc(medicationRef, {
       ...medication,
       updatedAt: Timestamp.now(),
     });
     
-    // If reminderTime is updated, update the Arduino time as well
-    if (medication.reminderTime && medication.userId) {
-      await updateArduinoTime(medication.userId, medication.reminderTime);
+    // If reminderTime is updated and we have a userId, update the Arduino time as well
+    if (medication.reminderTime && userId) {
+      await updateArduinoTime(userId, medication.reminderTime);
     }
     
     return true;

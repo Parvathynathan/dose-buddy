@@ -61,22 +61,9 @@ const MedicationList = ({
     });
   };
 
-  const formatTimeOfDay = (time: string) => {
-    return time.charAt(0).toUpperCase() + time.slice(1);
-  };
-
   const formatFoodRelation = (relation: string) => {
     const formattedText = relation.charAt(0).toUpperCase() + relation.slice(1);
-    
-    if (relation === "before") {
-      return `${formattedText} Food`;
-    } else if (relation === "with") {
-      return `${formattedText} Food`;
-    } else if (relation === "after") {
-      return `${formattedText} Food`;
-    } else {
-      return "Any Time";
-    }
+    return `${formattedText} Food`;
   };
 
   const getFoodRelationIcon = (relation: string) => {
@@ -130,10 +117,9 @@ const MedicationList = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[40%]">Medication</TableHead>
-              <TableHead className="w-[20%]">Dosage</TableHead>
-              <TableHead className="w-[20%]">Schedule</TableHead>
-              <TableHead className="w-[15%]">Food</TableHead>
+              <TableHead className="w-[50%]">Medication</TableHead>
+              <TableHead className="w-[25%]">Schedule</TableHead>
+              <TableHead className="w-[20%]">Food</TableHead>
               <TableHead className="w-[5%]"></TableHead>
             </TableRow>
           </TableHeader>
@@ -143,11 +129,10 @@ const MedicationList = ({
                 <TableCell className="font-medium">
                   {medication.name}
                 </TableCell>
-                <TableCell>{medication.dosage}</TableCell>
                 <TableCell>
                   <div className="flex items-center">
                     {getTimeIcon()}
-                    {formatTimeOfDay(medication.timeOfDay)}
+                    {medication.reminderTime || "Not set"}
                   </div>
                 </TableCell>
                 <TableCell>
@@ -161,9 +146,7 @@ const MedicationList = ({
                         ? "Before"
                         : medication.foodRelation === "with"
                         ? "With"
-                        : medication.foodRelation === "after"
-                        ? "After"
-                        : "Any"}
+                        : "After"}
                     </span>
                   </div>
                 </TableCell>

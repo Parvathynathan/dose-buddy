@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getMedications, addMedication, updateMedication, deleteMedication } from "@/lib/medication-service";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, Clock, Pill, Wifi, AlertTriangle } from "lucide-react";
+import { Pill, Wifi, AlertTriangle, Clock } from "lucide-react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
@@ -15,21 +15,11 @@ const Dashboard = () => {
   const { user, logout } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [currentTime, setCurrentTime] = useState(new Date());
   const [arduinoStatus, setArduinoStatus] = useState({
     connected: false,
     lastSeen: null as Date | null,
     scheduledTime: ""
   });
-  
-  // Update current time every second
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    
-    return () => clearInterval(timer);
-  }, []);
   
   // Listen for Arduino status updates
   useEffect(() => {
@@ -131,8 +121,8 @@ const Dashboard = () => {
         </div>
         <div className="flex items-center gap-4">
           <MedicationForm onAddMedication={handleAddMedication} />
-          <Button variant="outline" size="icon" onClick={handleLogout}>
-            <LogOut className="h-4 w-4" />
+          <Button variant="outline" onClick={handleLogout}>
+            Logout
           </Button>
         </div>
       </header>
@@ -166,13 +156,6 @@ const Dashboard = () => {
             )}
           </div>
         </div>
-      </div>
-
-      {/* Current Time Display */}
-      <div className="mb-6 text-center">
-        <p className="text-lg">
-          Current Time: <span className="font-semibold">{currentTime.toLocaleTimeString()}</span>
-        </p>
       </div>
 
       {isLoading ? (

@@ -1,7 +1,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { User } from "firebase/auth";
-import { onAuthChange, signIn, signUp, signOut } from "@/lib/auth-service";
+import { onAuthChange, signIn, signUp, signOut, signInWithGoogle } from "@/lib/auth-service";
 import { useToast } from "@/hooks/use-toast";
 
 type AuthContextType = {
@@ -9,6 +9,7 @@ type AuthContextType = {
   loading: boolean;
   login: (email: string, password: string) => Promise<User>;
   register: (email: string, password: string) => Promise<User>;
+  loginWithGoogle: () => Promise<User>;
   logout: () => Promise<boolean>;
 };
 
@@ -71,6 +72,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw error;
     }
   };
+  
+  const loginWithGoogle = async () => {
+    try {
+      const user = await signInWithGoogle();
+      toast({
+        title: "Success",
+        description: "Successfully logged in with Google",
+      });
+      return user;
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
 
   const logout = async () => {
     try {
@@ -95,6 +114,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loading,
     login,
     register,
+    loginWithGoogle,
     logout,
   };
 

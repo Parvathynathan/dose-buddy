@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,10 +34,9 @@ export type Medication = {
   id: string;
   name: string;
   dosage: string;
-  timeOfDay: string;
   foodRelation: string;
   reminderTime?: string;
-  userId?: string; // Added userId property
+  userId?: string;
 };
 
 const MedicationForm = ({
@@ -50,7 +50,6 @@ const MedicationForm = ({
   const [medication, setMedication] = useState<Omit<Medication, "id">>({
     name: initialData?.name || "",
     dosage: initialData?.dosage || "",
-    timeOfDay: initialData?.timeOfDay || "",
     foodRelation: initialData?.foodRelation || "",
     reminderTime: initialData?.reminderTime || "",
   });
@@ -64,7 +63,7 @@ const MedicationForm = ({
     e.preventDefault();
     
     // Validate form
-    if (!medication.name || !medication.timeOfDay || !medication.foodRelation) {
+    if (!medication.name || !medication.foodRelation) {
       toast({
         title: "Error",
         description: "Please fill in all required fields",
@@ -87,7 +86,6 @@ const MedicationForm = ({
       setMedication({
         name: "",
         dosage: "",
-        timeOfDay: "",
         foodRelation: "",
         reminderTime: "",
       });
@@ -131,26 +129,6 @@ const MedicationForm = ({
         </div>
         
         <div className="grid gap-2">
-          <Label htmlFor="med-time">Time of Day</Label>
-          <Select
-            value={medication.timeOfDay}
-            onValueChange={(value) =>
-              setMedication({ ...medication, timeOfDay: value })
-            }
-          >
-            <SelectTrigger id="med-time" className="h-12">
-              <SelectValue placeholder="Select time" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="morning">Morning</SelectItem>
-              <SelectItem value="afternoon">Afternoon</SelectItem>
-              <SelectItem value="evening">Evening</SelectItem>
-              <SelectItem value="night">Night</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <div className="grid gap-2">
           <Label htmlFor="med-reminder-time">Specific Reminder Time</Label>
           <Input
             id="med-reminder-time"
@@ -178,7 +156,6 @@ const MedicationForm = ({
               <SelectItem value="before">Before Food</SelectItem>
               <SelectItem value="with">With Food</SelectItem>
               <SelectItem value="after">After Food</SelectItem>
-              <SelectItem value="any">Any Time</SelectItem>
             </SelectContent>
           </Select>
         </div>

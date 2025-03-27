@@ -29,7 +29,6 @@ export const getMedications = async (userId: string) => {
         id: doc.id,
         name: data.name,
         dosage: data.dosage,
-        timeOfDay: data.timeOfDay,
         foodRelation: data.foodRelation,
         reminderTime: data.reminderTime,
       });

@@ -7,10 +7,12 @@ import { useToast } from "@/hooks/use-toast";
 type AuthContextType = {
   user: User | null;
   loading: boolean;
+  justLoggedIn: boolean;
   login: (email: string, password: string) => Promise<User>;
   register: (email: string, password: string) => Promise<User>;
   loginWithGoogle: () => Promise<User>;
   logout: () => Promise<boolean>;
+  clearJustLoggedIn: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -26,6 +28,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [justLoggedIn, setJustLoggedIn] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -37,9 +40,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
+  const clearJustLoggedIn = () => {
+    setJustLoggedIn(false);
+  };
+
   const login = async (email: string, password: string) => {
     try {
       const user = await signIn(email, password);
+      setJustLoggedIn(true);
       toast({
         title: "Success",
         description: "Successfully logged in",
@@ -58,6 +66,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const register = async (email: string, password: string) => {
     try {
       const user = await signUp(email, password);
+      setJustLoggedIn(true);
       toast({
         title: "Success",
         description: "Account created successfully",
@@ -76,6 +85,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const loginWithGoogle = async () => {
     try {
       const user = await signInWithGoogle();
+      setJustLoggedIn(true);
       toast({
         title: "Success",
         description: "Successfully logged in with Google",
@@ -112,10 +122,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const value = {
     user,
     loading,
+    justLoggedIn,
     login,
     register,
     loginWithGoogle,
     logout,
+    clearJustLoggedIn,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
